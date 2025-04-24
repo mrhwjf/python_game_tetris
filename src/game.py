@@ -84,7 +84,7 @@ class Game:
             self.game_over = True
             # Cập nhật new_high_score và lưu kết quả (dành cho 1 người chơi)
             if self.mode == "single_player":
-                self.new_high_score = self.high_score_manager.update_high_score(self.score)
+                self.new_high_score = self.high_score_manager.qualifies(self.score)
 
     def reset(self):
         self.grid.reset()

@@ -72,6 +72,29 @@ def start_two_player(screen, sound_manager, cursor_manager):
 
             # Handle key presses for in-game control, pause, and game over
             if event.type == pygame.KEYDOWN:
+                
+                # Player 1 controls (if not paused and not game over)
+                if not paused and not player1.game_over:
+                    if event.key == pygame.K_a:
+                        player1.move_left()
+                    if event.key == pygame.K_d:
+                        player1.move_right()
+                    if event.key == pygame.K_s:
+                        player1.hard_drop()
+                    if event.key == pygame.K_w:
+                        player1.rotate()
+
+                # Player 2 controls (if not paused and not game over)
+                if not paused and not player2.game_over:
+                    if event.key == pygame.K_LEFT:
+                        player2.move_left()
+                    if event.key == pygame.K_RIGHT:
+                        player2.move_right()
+                    if event.key == pygame.K_DOWN:
+                        player2.hard_drop()
+                    if event.key == pygame.K_UP:
+                        player2.rotate()
+                        
                 # Toggle pause with ESC if neither player is game over
                 if event.key == pygame.K_ESCAPE:
                     if player1.game_over and player2.game_over:
@@ -103,28 +126,6 @@ def start_two_player(screen, sound_manager, cursor_manager):
                     paused = False
                     sound_manager.play_music("game")
                     game_over_music_played = False
-
-                # Player 1 controls (if not paused and not game over)
-                if not paused and not player1.game_over:
-                    if event.key == pygame.K_a:
-                        player1.move_left()
-                    if event.key == pygame.K_d:
-                        player1.move_right()
-                    if event.key == pygame.K_s:
-                        player1.hard_drop()
-                    if event.key == pygame.K_w:
-                        player1.rotate()
-
-                # Player 2 controls (if not paused and not game over)
-                if not paused and not player2.game_over:
-                    if event.key == pygame.K_LEFT:
-                        player2.move_left()
-                    if event.key == pygame.K_RIGHT:
-                        player2.move_right()
-                    if event.key == pygame.K_DOWN:
-                        player2.hard_drop()
-                    if event.key == pygame.K_UP:
-                        player2.rotate()
 
             # Handle automatic drop updates for each player
             if event.type == GAME_UPDATE_1 and not paused and not player1.game_over:

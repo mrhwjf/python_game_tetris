@@ -2,8 +2,8 @@ import json
 import os
 
 class HighScoreManager:
-    def __init__(self):
-        self.file_path = "highscore.json"
+    def __init__(self, file_path="highscore.json"):
+        self.file_path = file_path
         self.high_scores = self.load_high_scores()
 
     def load_high_scores(self):
@@ -11,7 +11,6 @@ class HighScoreManager:
             return {"single_player": []}
         with open(self.file_path, "r") as f:
             data = json.load(f)
-            # ensure scores are ints
             for entry in data.get("single_player", []):
                 if "score" in entry:
                     entry["score"] = int(entry["score"])
@@ -22,17 +21,27 @@ class HighScoreManager:
             json.dump(self.high_scores, f, indent=4)
 
     def get_high_scores(self):
-        """Trả về top 10 single-player, giữ nguyên duplicates."""
+        """Trả về top 10 single-player."""
         scores = self.high_scores.get("single_player", [])
-        # đảm bảo score là int
         for entry in scores:
             entry["score"] = int(entry["score"])
-        # sort descending và lấy 10
         return sorted(scores, key=lambda x: x["score"], reverse=True)[:10]
 
-    def update_high_score(self, score, name="Player") -> bool:
-        if score is None or not isinstance(score, (int, float, str)):
-            raise ValueError("Score must be a number, not None")
+    def qualifies(self, score) -> bool:
+        """
+        Kiểm tra xem score có đủ vào top 10 không,
+        mà không thêm vào file.
+        """
+        score = int(score)
+        top10 = self.get_high_scores()
+        if len(top10) < 10:
+            return True
+        return score > top10[-1]["score"]
+
+    def update_high_score(self, score, name="Player") -> None:
+        """
+        Thêm vào danh sách và lưu, sau khi đã biết tên thực của người chơi.
+        """
         score = int(score)
         if "single_player" not in self.high_scores:
             self.high_scores["single_player"] = []
@@ -44,6 +53,3 @@ class HighScoreManager:
             reverse=True
         )[:10]
         self.save_high_scores()
-        # trả về xem entry vừa thêm có phải top 1 không
-        top10 = self.get_high_scores()
-        return top10 and top10[0]["score"] == score
