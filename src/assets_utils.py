@@ -1,6 +1,10 @@
+# assets_utils.py
 import pygame
+import time
 from settings import TILE_SIZE
+from pygame._sdl2 import Window
 
+# Định nghĩa các đường dẫn (sửa để trỏ đúng từ thư mục src/)
 BLOCK_TEXTURE_DIR_PATH: dict[int, str] = {
     1: "assets/block/Tetromino_block1_1.png",
     2: "assets/block/Tetromino_block1_2.png",
@@ -20,7 +24,8 @@ MUSIC: dict[str, str] = {
 
 SFX_DIR_PATH: dict[str, str] = {
     "hard-landing": "assets/sfx/hard_landing.wav",
-    "line-clear": "assets/sfx/line_clear.wav"
+    "line-clear": "assets/sfx/line_clear.wav",
+    "select": "assets/sfx/select.wav"
 }
 
 GRID_IMG_DIR_PATH = "assets/Grid.png"
@@ -39,79 +44,81 @@ COLORS: dict[str, tuple[int, int, int]] = {
     "lightblue": (173, 216, 230),
 }
 
+BLOCK_TEXTURE: dict[int, pygame.Surface] = None
 
 def shrink_image(image_path: str, target_size: tuple[int, int]) -> pygame.Surface:
-    image: pygame.Surface = pygame.image.load(image_path).convert_alpha()
-    bounding_rect: pygame.Rect = image.get_bounding_rect()
-    cropped_image: pygame.Surface = image.subsurface(bounding_rect)
-    scaled_image: pygame.Surface = pygame.transform.smoothscale(cropped_image, target_size)
-    return scaled_image
-
-def scale_image(dir_path: str, target_size: tuple[int, int]) -> pygame.Surface:
-    image = pygame.image.load(dir_path).convert_alpha()
-    orig_w, orig_h = image.get_size()
-    target_w, target_h = target_size
-
-    scale_factor = min(target_w / orig_w, target_h / orig_h)
-
-    new_w = int(orig_w * scale_factor)
-    new_h = int(orig_h * scale_factor)
-
-    scaled_image = pygame.transform.smoothscale(image, (new_w, new_h))
-
-    return scaled_image
-
-def play_music(track: str, loop: bool = True) -> None:
-    if track in MUSIC:
-        try:
-            # Initialize the mixer if not already initialized
-            if not pygame.mixer.get_init():
-                pygame.mixer.init()
-            
-            pygame.mixer.music.load(MUSIC.get(track))
-            pygame.mixer.music.play(-1 if loop else 0)
-            pygame.mixer.music.set_volume(1.0)
-        except pygame.error as e:
-            print(f"Error playing music: {e}")
-
-def pause_music():
-    pygame.mixer.music.pause()
-
-def resume_music():
-    pygame.mixer.music.unpause()
-
-def stop_music():
-    pygame.mixer.music.stop()
-
-
-def load_sfx() -> dict[str, pygame.mixer.Sound]:
-    pygame.mixer.init()
-    loaded_sfx = {name: pygame.mixer.Sound(path) for name, path in SFX_DIR_PATH.items()}
-    return loaded_sfx
+    """Thu nhỏ hình ảnh về kích thước mục tiêu."""
+    try:
+        image: pygame.Surface = pygame.image.load(image_path).convert_alpha()
+        bounding_rect: pygame.Rect = image.get_bounding_rect()
+        cropped_image: pygame.Surface = image.subsurface(bounding_rect)
+        scaled_image: pygame.Surface = pygame.transform.smoothscale(cropped_image, target_size)
+        return scaled_image
+    except pygame.error as e:
+        print(f"Error loading image from {image_path}: {e}")
+        raise
 
 def load_block_textures() -> dict[int, pygame.Surface]:
-    loaded_texture = {key: shrink_image(path, (TILE_SIZE, TILE_SIZE)) for key, path in BLOCK_TEXTURE_DIR_PATH.items()}
-    return loaded_texture
+    """Tải texture cho các khối."""
+    global BLOCK_TEXTURE
+    if BLOCK_TEXTURE is None:
+        BLOCK_TEXTURE = {}
+        for key, path in BLOCK_TEXTURE_DIR_PATH.items():
+            try:
+                BLOCK_TEXTURE[key] = shrink_image(path, (TILE_SIZE, TILE_SIZE))
+            except pygame.error as e:
+                print(f"Error loading texture for block {key} from {path}: {e}")
+                raise FileNotFoundError(f"Could not load texture for block {key} from {path}")
+    return BLOCK_TEXTURE
 
-import pygame
-
-def create_tiled_background(screen: pygame.Surface, tile: pygame.Surface) -> pygame.Surface:
+def draw_loading_bar(screen, duration=5000, width=400, height=50, x=None, y=None,
+                     bg_color=COLORS.get("black"),
+                     fill_color=COLORS.get("yellow"),
+                     border_color=COLORS.get("white"),
+                     border_width=2):
     screen_width, screen_height = screen.get_size()
-    tile_width, tile_height = tile.get_size()
 
-    background = pygame.Surface((screen_width, screen_height))
-    
-    for x in range(0, screen_width, tile_width):
-        for y in range(0, screen_height, tile_height):
-            background.blit(tile, (x, y))
+    if x is None:
+        x = (screen_width - width) // 2
+    if y is None:
+        y = (screen_height - height) // 2
 
-    return background
+    clock = pygame.time.Clock()
+    start_time = pygame.time.get_ticks()
 
-def draw_tiled_background(screen: pygame.Surface, tiled_bg: pygame.Surface):
-    screen.blit(tiled_bg, (0, 0))
+    running = True
+    while running:
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                running = False
+                return  # exit early if window closed
 
+        current_time = pygame.time.get_ticks()
+        elapsed_time = current_time - start_time
+        progress = min(1, elapsed_time / duration)
+        fill_width = int(width * progress)
 
+        screen.fill(COLORS.get("black"))
 
+        # Border
+        pygame.draw.rect(screen, border_color, (x, y, width, height), border_width)
 
-SFX: dict[str, pygame.mixer.Sound] = load_sfx()
-BLOCK_TEXTURE: dict[int, pygame.Surface] = load_block_textures()
+        # Background inside bar
+        pygame.draw.rect(screen, bg_color, (
+            x + border_width, y + border_width,
+            width - 2 * border_width, height - 2 * border_width
+        ))
+
+        # Progress fill
+        pygame.draw.rect(screen, fill_color, (
+            x + border_width, y + border_width,
+            max(0, fill_width - 2 * border_width), height - 2 * border_width
+        ))
+
+        pygame.display.flip()
+
+        if elapsed_time >= duration:
+            running = False
+
+        clock.tick(60)  # smooth 60fps refresh
+
