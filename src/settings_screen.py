@@ -3,7 +3,7 @@ import sys
 from settings import FONT_DIR_PATH
 from assets_utils import COLORS
 
-def show_settings(screen, sound_manager):
+def show_settings(screen, sound_manager, cursor_manager) -> str:
     pygame.display.set_caption("Tetris - Settings")
     title_font = pygame.font.Font(FONT_DIR_PATH, 24)
     text_font  = pygame.font.Font(FONT_DIR_PATH, 16)
@@ -50,7 +50,11 @@ def show_settings(screen, sound_manager):
                 for i, r in enumerate(rects):
                     if r.collidepoint(mx, my):
                         selected = i
+                        cursor_manager.set_cursor("hand")
                         break
+                    else:
+                        cursor_manager.set_cursor("arrow")
+                        
             if ev.type == pygame.MOUSEBUTTONDOWN and ev.button==1:
                 if selected==0:
                     sound_manager.toggle_music()

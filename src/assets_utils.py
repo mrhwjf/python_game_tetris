@@ -120,5 +120,5 @@ def draw_loading_bar(screen, duration=5000, width=400, height=50, x=None, y=None
         if elapsed_time >= duration:
             running = False
 
-        clock.tick(60)  # smooth 60fps refresh
+        clock.tick(5)
 

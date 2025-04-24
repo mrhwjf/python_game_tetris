@@ -9,7 +9,7 @@ def start_single_player(screen, sound_manager, cursor_manager):
     sound_manager.play_music("game")
     pygame.display.set_caption("Tetris - Single Player")
     paused = False
-
+    
     cursor_manager.set_cursor("arrow")
 
     from game import Game
@@ -21,16 +21,16 @@ def start_single_player(screen, sound_manager, cursor_manager):
     high_score_surface = hiscore_font.render("HiScore", True, COLORS.get("white"))
     next_surface = game_font.render("Next", True, COLORS.get("white"))
     game_over_surface = game_font.render("GAME OVER", True, COLORS.get("red"))
-    restart_surf = hiscore_font.render("Press R to Restart", True, COLORS.get("white"))
+    restart_surface = hiscore_font.render("Press R to Restart", True, COLORS.get("white"))
     new_high_score_surface = game_font.render("New High Score!", True, COLORS.get("green"))
 
     # Load images
     grid_surface = pygame.image.load(GRID_IMG_DIR_PATH)
     border_surface = pygame.image.load(BORDER_IMG_DIR_PATH)
 
-    # Layout
-    screen_width = screen.get_width() # Now 1000
-    screen_height = screen.get_height() # Now 800
+    # Layout calculations
+    screen_width = screen.get_width()
+    screen_height = screen.get_height()
     grid_width = 400
     side_width = 180
     padding = 10
@@ -39,18 +39,12 @@ def start_single_player(screen, sound_manager, cursor_manager):
     grid_x = start_x
     side_x = grid_x + grid_width + padding
 
-    # Center the entire block vertically (optional, but often looks good)
-    total_height = 600 # Approximate total height of the main elements
-    start_y = (screen_height - total_height) // 2
-
-    score_rect = pygame.Rect(side_x, start_y + 50, 180, 60)
-    high_score_rect = pygame.Rect(side_x, start_y + 370, 180, 60)
-    next_rect = pygame.Rect(side_x, start_y + 150, 180, 180)
-
+    # Side panel rects
     score_rect = pygame.Rect(side_x, 50, 180, 60)
     high_score_rect = pygame.Rect(side_x, 370, 180, 60)
     next_rect = pygame.Rect(side_x, 150, 180, 180)
 
+    # Timer event for automatic drop
     GAME_UPDATE = pygame.USEREVENT
     pygame.time.set_timer(GAME_UPDATE, 1000)
 
@@ -59,6 +53,10 @@ def start_single_player(screen, sound_manager, cursor_manager):
     game_over_music_played = False
     high_score_updated = False
 
+    # Flicker settings for Game Over & Restart texts
+    FLICKER_INTERVAL = 500  # milliseconds
+    last_flicker_time = pygame.time.get_ticks()
+    show_flicker = True
 
     while True:
         for event in pygame.event.get():
@@ -67,10 +65,10 @@ def start_single_player(screen, sound_manager, cursor_manager):
                 sys.exit()
 
             if event.type == pygame.KEYDOWN:
-                # Handle ESC key
+                # ESC: pause or exit
                 if event.key == pygame.K_ESCAPE:
                     if player.game_over:
-                        return "back_to_menu"  # Return to main menu on ESC during game over
+                        return "back_to_menu"
                     elif not paused:
                         paused = True
                         result = pause_game(screen, cursor_manager)
@@ -84,7 +82,7 @@ def start_single_player(screen, sound_manager, cursor_manager):
                             return "back_to_menu"
                     continue
 
-                # Restart on space if game over
+                # Restart on R
                 if player.game_over and event.key == pygame.K_r:
                     player.reset()
                     paused = False
@@ -92,7 +90,7 @@ def start_single_player(screen, sound_manager, cursor_manager):
                     game_over_music_played = False
                     high_score_updated = False
 
-                # In-game controls if not paused
+                # In-game controls
                 if not player.game_over and not paused:
                     if event.key == pygame.K_LEFT:
                         player.move_left()
@@ -100,16 +98,21 @@ def start_single_player(screen, sound_manager, cursor_manager):
                         player.move_right()
                     elif event.key == pygame.K_DOWN:
                         player.hard_drop()
-                    elif event.key == pygame.K_UP:
-                        player.rotate()
-                    elif event.key == pygame.K_SPACE:
+                    elif event.key in (pygame.K_UP, pygame.K_SPACE):
                         player.rotate()
 
             # Automatic drop
             if event.type == GAME_UPDATE and not paused and not player.game_over:
                 player.move_down()
 
-        # Draw game
+        # Update flicker flag if game over
+        if player.game_over:
+            now = pygame.time.get_ticks()
+            if now - last_flicker_time > FLICKER_INTERVAL:
+                show_flicker = not show_flicker
+                last_flicker_time = now
+
+        # Draw game field
         screen.fill(COLORS.get("black"))
         screen.blit(grid_surface, (grid_x, 0))
         screen.blit(border_surface, (grid_x, 0))
@@ -133,49 +136,38 @@ def start_single_player(screen, sound_manager, cursor_manager):
         screen.blit(hs_val_surf, hs_val_surf.get_rect(centerx=high_score_rect.centerx, centery=high_score_rect.centery))
         player.draw_next_block(screen, next_rect)
 
-        # Handle game over GUI
+        # Handle Game Over UI with flicker
         if player.game_over:
             if not game_over_music_played:
                 sound_manager.stop_music()
                 sound_manager.play_music("after-game")
                 game_over_music_played = True
 
-            # Prepare surfaces
-            go_surf = game_over_surface
-            nhs_surf = new_high_score_surface if getattr(player, "new_high_score", False) else None
-            restart_surf = restart_surf
+            # Only draw texts when show_flicker is True
+            if show_flicker:
+                center_x = grid_x + grid_width // 2
+                texts = [game_over_surface]
+                if getattr(player, "new_high_score", False):
+                    texts.append(new_high_score_surface)
+                texts.append(restart_surface)
 
-            # Create a list of texts to draw
-            texts_to_draw = [go_surf]
-            if nhs_surf:
-                texts_to_draw.append(nhs_surf)
-            texts_to_draw.append(restart_surf)
+                # Calculate vertical centering
+                total_h = sum(s.get_height() for s in texts) + 20 * (len(texts) - 1)
+                start_y = (screen_height - total_h) // 2
+                y = start_y
 
-            # Set starting y position
-            center_x = grid_x + 200
-            # Approximate total height of the game over texts
-            total_height_go = sum([surf.get_height() for surf in texts_to_draw]) + 20 * (len(texts_to_draw) - 1)
-            start_y_go = (screen_height - total_height_go) // 2 # Center vertically
+                for surf in texts:
+                    rect = surf.get_rect(center=(center_x, y + surf.get_height() // 2))
+                    pygame.draw.rect(screen, COLORS.get("black"), rect.inflate(20, 10), border_radius=5)
+                    pygame.draw.rect(screen, COLORS.get("white"), rect.inflate(20, 10), width=2, border_radius=5)
+                    screen.blit(surf, rect.topleft)
+                    y = rect.bottom + 20
 
-            current_y = start_y_go
-
-            # Draw each with spacing and background
-            for surf in texts_to_draw:
-                rect = surf.get_rect(center=(center_x, current_y + surf.get_height() // 2))
-                pygame.draw.rect(screen, COLORS.get("black"), rect.inflate(20, 10), border_radius=5)
-                pygame.draw.rect(screen, COLORS.get("white"), rect.inflate(20, 10), width=2, border_radius=5)
-                screen.blit(surf, rect.topleft)
-                current_y = rect.bottom + 20
-
-            # Handle new high score input after drawing
+            # Name input for new high score
             if getattr(player, "new_high_score", False) and not high_score_updated:
                 name = show_name_input(screen, player.score)
-                player.high_score_manager.update_high_score(
-                    player.score,
-                    name=name
-                )
+                player.high_score_manager.update_high_score(player.score, name=name)
                 high_score_updated = True
-
 
         pygame.display.flip()
         clock.tick(30)

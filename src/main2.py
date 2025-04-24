@@ -20,7 +20,6 @@ def start_two_player(screen, sound_manager, cursor_manager):
     win_surface = title_font.render("WIN", True, COLORS.get("cyan"))
     lose_surface = title_font.render("LOSE", True, COLORS.get("red"))
     draw_surface = title_font.render("DRAW", True, COLORS.get("white"))
-    # paused_surface = title_font.render("PAUSED", True, COLORS.get("white"))
 
     # Load images
     grid_surface = pygame.image.load(GRID_IMG_DIR_PATH)
@@ -72,29 +71,6 @@ def start_two_player(screen, sound_manager, cursor_manager):
 
             # Handle key presses for in-game control, pause, and game over
             if event.type == pygame.KEYDOWN:
-                
-                # Player 1 controls (if not paused and not game over)
-                if not paused and not player1.game_over:
-                    if event.key == pygame.K_a:
-                        player1.move_left()
-                    if event.key == pygame.K_d:
-                        player1.move_right()
-                    if event.key == pygame.K_s:
-                        player1.hard_drop()
-                    if event.key == pygame.K_w:
-                        player1.rotate()
-
-                # Player 2 controls (if not paused and not game over)
-                if not paused and not player2.game_over:
-                    if event.key == pygame.K_LEFT:
-                        player2.move_left()
-                    if event.key == pygame.K_RIGHT:
-                        player2.move_right()
-                    if event.key == pygame.K_DOWN:
-                        player2.hard_drop()
-                    if event.key == pygame.K_UP:
-                        player2.rotate()
-                        
                 # Toggle pause with ESC if neither player is game over
                 if event.key == pygame.K_ESCAPE:
                     if player1.game_over and player2.game_over:
@@ -126,6 +102,28 @@ def start_two_player(screen, sound_manager, cursor_manager):
                     paused = False
                     sound_manager.play_music("game")
                     game_over_music_played = False
+
+                # Player 1 controls (if not paused and not game over)
+                if not paused and not player1.game_over:
+                    if event.key == pygame.K_a:
+                        player1.move_left()
+                    if event.key == pygame.K_d:
+                        player1.move_right()
+                    if event.key == pygame.K_s:
+                        player1.hard_drop()
+                    if event.key == pygame.K_w:
+                        player1.rotate()
+
+                # Player 2 controls (if not paused and not game over)
+                if not paused and not player2.game_over:
+                    if event.key == pygame.K_LEFT:
+                        player2.move_left()
+                    if event.key == pygame.K_RIGHT:
+                        player2.move_right()
+                    if event.key == pygame.K_DOWN:
+                        player2.hard_drop()
+                    if event.key == pygame.K_UP:
+                        player2.rotate()
 
             # Handle automatic drop updates for each player
             if event.type == GAME_UPDATE_1 and not paused and not player1.game_over:
@@ -180,7 +178,7 @@ def start_two_player(screen, sound_manager, cursor_manager):
             # Flickering effect for Game Over and Restart prompt
             elapsed_time = pygame.time.get_ticks() // 1000
             if elapsed_time % 2 == 0:  # Every second, toggle visibility
-                go_surf = title_font.render("Game Over", True, COLORS.get("white"))
+                go_surf = title_font.render("Game Over", True, COLORS.get("red"))
                 go_rect = go_surf.get_rect(topleft=(grid1_x + 400, 380))
                 pygame.draw.rect(screen,
                                 COLORS.get("black"),

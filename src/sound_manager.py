@@ -46,6 +46,9 @@ class SoundManager:
         print("Music paused")
 
     def resume_music(self):
+        if not self.music_enabled:
+            print(f"Current music: ${self.current_music}. Music is disabled")
+            return
         pygame.mixer.music.unpause()
         print("Music resumed")
 
@@ -64,9 +67,9 @@ class SoundManager:
         self.music_enabled = not self.music_enabled
         print("Music toggled to:", self.music_enabled)
         if not self.music_enabled and self.current_music:
-            pygame.mixer.music.pause()
+            pygame.mixer.music.stop()
         elif self.music_enabled and self.current_music:
-            pygame.mixer.music.unpause()
+            pygame.mixer.music.play()
 
     def toggle_sfx(self):
         self.sfx_enabled = not self.sfx_enabled

@@ -21,7 +21,7 @@ class Run:
         self.sound_manager.play_music("start-up", loop=False)
         
         load_block_textures()
-        draw_loading_bar(self.screen, duration=8000)
+        draw_loading_bar(self.screen, duration=11000)
 
         self.app = App(self.default_res[0], self.default_res[1])
         self.clock = pygame.time.Clock()
@@ -86,7 +86,7 @@ class Run:
             self.state = "menu"
     
     def run_settings(self):
-        result = show_settings(self.screen, self.sound_manager)
+        result = show_settings(self.screen, self.sound_manager, self.cursor_manager)
         if result == "back_to_menu":    
             self.state = "menu"
     
