@@ -34,9 +34,7 @@ class HighScoreManager:
         """
         score = int(score)
         top10 = self.get_high_scores()
-        if len(top10) < 10:
-            return True
-        return score > top10[-1]["score"]
+        return score > top10[0]["score"]
 
     def update_high_score(self, score, name="Player") -> None:
         """
