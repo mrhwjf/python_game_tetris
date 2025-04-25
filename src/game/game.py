@@ -24,6 +24,7 @@ class Game:
         self.user_event: int = user_event
         self.game_speed: int = 1000 # Milliseconds
         self.lines_cleared: int = 0
+        self.rank: int = 0
 
     def update_score(self, lines_cleared: int, move_down_points: int):
         if lines_cleared > 0:
@@ -94,6 +95,7 @@ class Game:
         self.game_over = False
         self.paused = False
         self.new_high_score = False  # Reset lại trạng thái high score mới
+        self.rank = 0
 
     def block_fits(self) -> bool:
         tiles = self.current_block.get_cell_positions()

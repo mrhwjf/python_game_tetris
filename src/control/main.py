@@ -58,6 +58,9 @@ def start_single_player(screen, sound_manager, cursor_manager):
     last_flicker_time = pygame.time.get_ticks()
     show_flicker = True
 
+    # Get high score list
+    high_scores = player.high_score_manager.get_high_scores()
+
     while True:
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
@@ -119,8 +122,8 @@ def start_single_player(screen, sound_manager, cursor_manager):
         player.draw(screen, offset_x=grid_x)
 
         # Side panel UI
-        high_scores = player.high_score_manager.get_high_scores()
-        hs_val = str(high_scores[0]["score"] if high_scores else 0)
+        target_score = player.high_score_manager.get_next_target_score(player.score, high_scores)
+        hs_val = str(target_score) # Get point of the next top x player
         score_val_surf = game_font.render(str(player.score), True, COLORS.get("black"))
         hs_val_surf = game_font.render(hs_val, True, COLORS.get("black"))
         screen.blit(score_surface, (side_x + 20, 20))
@@ -165,7 +168,8 @@ def start_single_player(screen, sound_manager, cursor_manager):
 
             # Name input for new high score
             if getattr(player, "new_high_score", False) and not high_score_updated:
-                name = show_name_input(screen, player.score)
+                rank = player.high_score_manager.get_player_rank(player.score)
+                name = show_name_input(screen, player.score, rank)
                 player.high_score_manager.update_high_score(player.score, name=name)
                 high_score_updated = True
 

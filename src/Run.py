@@ -21,7 +21,7 @@ class Run:
         self.sound_manager.play_music("start-up", loop=False)
         
         load_block_textures()
-        draw_loading_bar(self.screen, duration=11000)
+        draw_loading_bar(self.screen, duration=1000)
 
         self.app = App(self.default_res[0], self.default_res[1])
         self.clock = pygame.time.Clock()

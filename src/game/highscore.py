@@ -27,14 +27,16 @@ class HighScoreManager:
             entry["score"] = int(entry["score"])
         return sorted(scores, key=lambda x: x["score"], reverse=True)[:10]
 
-    def qualifies(self, score) -> bool:
+    def qualifies(self, score: int) -> bool:
         """
         Kiểm tra xem score có đủ vào top 10 không,
         mà không thêm vào file.
         """
         score = int(score)
         top10 = self.get_high_scores()
-        return score > top10[0]["score"]
+        if len(top10) < 10:
+            return True
+        return score > top10[-1]["score"]
 
     def update_high_score(self, score, name="Player") -> None:
         """
@@ -51,3 +53,46 @@ class HighScoreManager:
             reverse=True
         )[:10]
         self.save_high_scores()
+
+    def get_score_by_rank(self, rank: int) -> int:
+        """
+        Trả về điểm số tương ứng với hạng (rank) trong top 10.
+        Rank bắt đầu từ 1 (hạng nhất).
+        """
+        scores = self.get_high_scores()
+        if 1 <= rank <= len(scores):
+            return scores[rank - 1]["score"]
+        return 0  # Nếu rank không tồn tại
+
+    def get_player_rank(self, score: int) -> int:
+        """
+        Trả về hạng của điểm số này trong bảng xếp hạng.
+        Nếu không lọt top 10 thì trả về -1.
+        """
+        score = int(score)
+        scores = self.get_high_scores()
+        for index, entry in enumerate(scores):
+            if score >= entry["score"]:
+                return index + 1  # Rank bắt đầu từ 1 trong khi đó index ds bắt đầu từ 0 nên + 1
+        if len(scores) < 10:
+            return len(scores) + 1  # Khi ds < 10
+        return -1  # Không đủ điểm lọt bảng
+
+    def get_next_target_score(self, player_score: int, high_scores: list[dict]) -> int:
+
+        if not high_scores:
+            return 0  # Aim for the first entry
+
+        lowest_higher_score = float('inf')
+        for entry in high_scores:
+            if player_score < entry["score"]:
+                lowest_higher_score = min(lowest_higher_score, entry["score"])
+
+        if lowest_higher_score == float('inf'):
+            # Player's score is already in the top 10 or higher than all.
+            return high_scores[0]["score"] if high_scores else 0
+        else:
+            return int(lowest_higher_score)
+
+
+

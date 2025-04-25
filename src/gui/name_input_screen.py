@@ -3,7 +3,7 @@ import sys
 from util.settings import FONT_DIR_PATH
 from util.assets_utils import COLORS
 
-def show_name_input(screen, score) -> str:
+def show_name_input(screen, score: int, top: int) -> str:
     pygame.display.set_caption("Tetris - Enter Your Name")
     title_font = pygame.font.Font(FONT_DIR_PATH, 24)
     text_font = pygame.font.Font(FONT_DIR_PATH, 16)
@@ -14,7 +14,7 @@ def show_name_input(screen, score) -> str:
     screen_width = screen.get_width()
     screen_height = screen.get_height()
 
-    title_text = title_font.render("New High Score!", True, highlight_color)
+    title_text = title_font.render(f"TOP {top} HIGHSCORE!", True, highlight_color)
     prompt_text = text_font.render(f"Score: {score}. Enter your name:", True, text_color)
     instruction_text = text_font.render("Press ENTER to submit", True, text_color)
 
