@@ -1,15 +1,15 @@
 # main2.py
 import pygame, sys
-from settings import *
-from settings_screen import show_settings
-from pause_menu import pause_game
+from util.settings import *
+from gui.settings_screen import show_settings
+from gui.pause_menu import pause_game
 
 def start_two_player(screen, sound_manager, cursor_manager):
     sound_manager.play_music("game")
     pygame.display.set_caption("Tetris - Two Player")
 
-    from game import Game
-    from assets_utils import COLORS, GRID_IMG_DIR_PATH, BORDER_IMG_DIR_PATH
+    from game.game import Game
+    from util.assets_utils import COLORS, GRID_IMG_DIR_PATH, BORDER_IMG_DIR_PATH
 
     # Fonts & labels
     title_font = pygame.font.Font(FONT_DIR_PATH, 21)

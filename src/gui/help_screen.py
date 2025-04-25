@@ -1,6 +1,6 @@
 import pygame, sys
-from settings import *
-from assets_utils import COLORS
+from util.settings import *
+from util.assets_utils import COLORS
 
 def wrap_text(text: str, font: pygame.font.Font, max_width: int) -> list[str]:
     """Hàm hỗ trợ tự động xuống dòng cho văn bản dài."""

@@ -1,8 +1,9 @@
 # App.py
 import pygame
-from cursor_manager import CursorManager
-from settings import FONT_DIR_PATH
-from sound_manager import SoundManager
+from util.assets_utils import TITLE_IMG_DIR_PATH
+from util.cursor_manager import CursorManager
+from util.settings import FONT_DIR_PATH
+from util.sound_manager import SoundManager
 
 class App:
     """Lớp quản lý giao diện menu chính."""
@@ -14,7 +15,7 @@ class App:
         self.WIDTH = width
         self.HEIGHT = height
         self.init_fonts()
-        self.title_image = pygame.image.load("assets/Title_No_BG.png").convert_alpha()
+        self.title_image = pygame.image.load(TITLE_IMG_DIR_PATH).convert_alpha()
         self.title_image = pygame.transform.scale(self.title_image, (600, 100))
         self.buttons = [
             {"text": "PLAY", "rect": pygame.Rect(0, 0, 300, 70), "action": "play"},

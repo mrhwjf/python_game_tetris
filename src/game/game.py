@@ -1,11 +1,11 @@
 # game.py
-from grid import Grid
-from tetromino import *
+from game.grid import Grid
+from game.tetromino import *
 import random
 import pygame.draw
-from settings import BLOCK_OFFSET_X, BLOCK_OFFSET_Y, TILE_SIZE
-from highscore import HighScoreManager
-from sound_manager import SoundManager
+from util.settings import BLOCK_OFFSET_X, BLOCK_OFFSET_Y, TILE_SIZE
+from game.highscore import HighScoreManager
+from util.sound_manager import SoundManager
 
 class Game:
     def __init__(self, sound_manager: SoundManager, screen: pygame.display, user_event: int, mode="single_player"):

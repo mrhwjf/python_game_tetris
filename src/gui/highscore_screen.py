@@ -1,8 +1,8 @@
 import pygame
 import sys
-from settings import FONT_DIR_PATH
-from assets_utils import COLORS
-from highscore import HighScoreManager
+from util.settings import FONT_DIR_PATH
+from util.assets_utils import COLORS
+from game.highscore import HighScoreManager
 
 def show_high_scores(screen):
     pygame.display.set_caption("Tetris - High Scores")

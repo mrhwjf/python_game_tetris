@@ -1,5 +1,5 @@
 import pygame
-from assets_utils import MUSIC, SFX_DIR_PATH
+from util.assets_utils import MUSIC, SFX_DIR_PATH
 
 class SoundManager:
     def __init__(self):

@@ -1,15 +1,15 @@
 import pygame
 import sys
-from settings import FRAME_RES
-from cursor_manager import CursorManager
-from App import App
-from main import start_single_player
-from main2 import start_two_player
-from help_screen import show_help
-from settings_screen import show_settings
-from highscore_screen import show_high_scores
-from sound_manager import SoundManager
-from assets_utils import load_block_textures, draw_loading_bar
+from util.settings import FRAME_RES
+from util.cursor_manager import CursorManager
+from control.App import App
+from control.main import start_single_player
+from control.main2 import start_two_player
+from gui.help_screen import show_help
+from gui.settings_screen import show_settings
+from gui.highscore_screen import show_high_scores
+from util.sound_manager import SoundManager
+from util.assets_utils import load_block_textures, draw_loading_bar
 
 class Run:
     def __init__(self):

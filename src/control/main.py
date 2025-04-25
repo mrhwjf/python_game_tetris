@@ -1,9 +1,9 @@
 import pygame, sys
-from pause_menu import pause_game
-from settings import FONT_DIR_PATH
-from settings_screen import show_settings
-from assets_utils import COLORS, GRID_IMG_DIR_PATH, BORDER_IMG_DIR_PATH
-from name_input_screen import show_name_input
+from gui.pause_menu import pause_game
+from util.settings import FONT_DIR_PATH
+from gui.settings_screen import show_settings
+from util.assets_utils import COLORS, GRID_IMG_DIR_PATH, BORDER_IMG_DIR_PATH
+from gui.name_input_screen import show_name_input
 
 def start_single_player(screen, sound_manager, cursor_manager):
     sound_manager.play_music("game")
@@ -12,7 +12,7 @@ def start_single_player(screen, sound_manager, cursor_manager):
     
     cursor_manager.set_cursor("arrow")
 
-    from game import Game
+    from game.game import Game
 
     # Fonts & labels
     game_font = pygame.font.Font(FONT_DIR_PATH, 23)

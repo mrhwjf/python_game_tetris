@@ -1,8 +1,8 @@
 # block.py
 import pygame.draw
-from position import Position
-from settings import TILE_SIZE
-from assets_utils import BLOCK_TEXTURE, load_block_textures  # Thêm import load_block_textures
+from game.position import Position
+from util.settings import TILE_SIZE
+from util.assets_utils import BLOCK_TEXTURE, load_block_textures  # Thêm import load_block_textures
 
 class Block:
     def __init__(self, id: int):

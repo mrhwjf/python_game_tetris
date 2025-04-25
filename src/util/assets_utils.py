@@ -1,7 +1,7 @@
 # assets_utils.py
 import pygame
 import time
-from settings import TILE_SIZE
+from util.settings import TILE_SIZE
 from pygame._sdl2 import Window
 
 # Định nghĩa các đường dẫn (sửa để trỏ đúng từ thư mục src/)
@@ -28,8 +28,9 @@ SFX_DIR_PATH: dict[str, str] = {
     "select": "assets/sfx/select.wav"
 }
 
-GRID_IMG_DIR_PATH = "assets/Grid.png"
-BORDER_IMG_DIR_PATH = "assets/Border.png"
+GRID_IMG_DIR_PATH = "assets/img/Grid.png"
+BORDER_IMG_DIR_PATH = "assets/img/Border.png"
+TITLE_IMG_DIR_PATH = "assets/img/Title_No_BG.png"
 
 COLORS: dict[str, tuple[int, int, int]] = {
     "black": (0, 0, 0),

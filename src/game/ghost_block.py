@@ -1,6 +1,6 @@
 # ghost_block.py
-from block import Block
-from position import Position
+from game.block import Block
+from game.position import Position
 
 # No import of Grid here to avoid the circular mess
 

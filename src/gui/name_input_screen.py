@@ -1,7 +1,7 @@
 import pygame
 import sys
-from settings import FONT_DIR_PATH
-from assets_utils import COLORS
+from util.settings import FONT_DIR_PATH
+from util.assets_utils import COLORS
 
 def show_name_input(screen, score) -> str:
     pygame.display.set_caption("Tetris - Enter Your Name")

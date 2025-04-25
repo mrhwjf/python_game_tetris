@@ -1,8 +1,8 @@
 import pygame.surface, pygame.rect
-from block import Block
-from ghost_block import get_ghost_block_position
-from settings import TILE_SIZE, BLOCK_OFFSET_X, BLOCK_OFFSET_Y
-from assets_utils import load_block_textures
+from game.block import Block
+from game.ghost_block import get_ghost_block_position
+from util.settings import TILE_SIZE, BLOCK_OFFSET_X, BLOCK_OFFSET_Y
+from util.assets_utils import load_block_textures
 
 class Grid:
     def __init__(self):

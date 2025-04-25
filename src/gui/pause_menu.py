@@ -1,9 +1,9 @@
 import sys
 import pygame
 
-from cursor_manager import CursorManager
-from settings import FONT_DIR_PATH
-from sound_manager import SoundManager
+from util.cursor_manager import CursorManager
+from util.settings import FONT_DIR_PATH
+from util.sound_manager import SoundManager
 
 
 def pause_game(screen, cursor_manager: CursorManager, sound_manager: SoundManager) -> str:

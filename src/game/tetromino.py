@@ -1,5 +1,5 @@
-from block import Block
-from position import Position
+from game.block import Block
+from game.position import Position
 
 BLOCK_CELLS = {
     1: {
