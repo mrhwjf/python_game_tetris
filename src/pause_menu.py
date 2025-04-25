@@ -3,9 +3,10 @@ import pygame
 
 from cursor_manager import CursorManager
 from settings import FONT_DIR_PATH
+from sound_manager import SoundManager
 
 
-def pause_game(screen, cursor_manager: CursorManager) -> str:
+def pause_game(screen, cursor_manager: CursorManager, sound_manager: SoundManager) -> str:
     """Hiển thị và xử lý menu tạm dừng.
     Trả về:
     - "resume" nếu chọn tiếp tục
@@ -64,6 +65,7 @@ def pause_game(screen, cursor_manager: CursorManager) -> str:
                 sys.exit()
 
             if event.type == pygame.KEYDOWN:
+                sound_manager.play_sfx("select")
                 if event.key == pygame.K_ESCAPE:
                     return "resume"
                 elif event.key == pygame.K_UP:
@@ -89,6 +91,7 @@ def pause_game(screen, cursor_manager: CursorManager) -> str:
                 font = enlarged_font
                 txt_rect = font.render(labels[selected_index][0], True, (0, 0, 0)).get_rect(center=pos)
                 if txt_rect.collidepoint(event.pos):
+                    sound_manager.play_sfx("select")
                     return action
 
         clock.tick(30)

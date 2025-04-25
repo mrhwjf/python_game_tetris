@@ -79,13 +79,13 @@ def start_two_player(screen, sound_manager, cursor_manager):
                         paused = True
                         player1.paused = True
                         player2.paused = True
-                        result = pause_game(screen, cursor_manager)
+                        result = pause_game(screen, cursor_manager, sound_manager)
                         if result == "resume":
                             paused = False
                             player1.paused = False
                             player2.paused = False
                         elif result == "settings":
-                            res = show_settings(screen, sound_manager)
+                            res = show_settings(screen, sound_manager, cursor_manager)
                             if res == "back_to_menu":
                                 paused = False
                                 player1.paused = False

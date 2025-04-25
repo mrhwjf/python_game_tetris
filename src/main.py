@@ -71,11 +71,11 @@ def start_single_player(screen, sound_manager, cursor_manager):
                         return "back_to_menu"
                     elif not paused:
                         paused = True
-                        result = pause_game(screen, cursor_manager)
+                        result = pause_game(screen, cursor_manager, sound_manager)
                         if result == "resume":
                             paused = False
                         elif result == "settings":
-                            res = show_settings(screen, sound_manager)
+                            res = show_settings(screen, sound_manager, cursor_manager)
                             if res == "back_to_menu":
                                 paused = False
                         elif result == "mainmenu":
