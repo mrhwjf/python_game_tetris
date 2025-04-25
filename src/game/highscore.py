@@ -54,16 +54,6 @@ class HighScoreManager:
         )[:10]
         self.save_high_scores()
 
-    def get_score_by_rank(self, rank: int) -> int:
-        """
-        Trả về điểm số tương ứng với hạng (rank) trong top 10.
-        Rank bắt đầu từ 1 (hạng nhất).
-        """
-        scores = self.get_high_scores()
-        if 1 <= rank <= len(scores):
-            return scores[rank - 1]["score"]
-        return 0  # Nếu rank không tồn tại
-
     def get_player_rank(self, score: int) -> int:
         """
         Trả về hạng của điểm số này trong bảng xếp hạng.
